@@ -102,13 +102,31 @@ line_source = ColumnDataSource(data=dict(x=X, y=Y))
 # Set up the Bokeh Plot
 plot = figure(plot_height=400,plot_width=400, title="Mohr's Circle",
               tools="pan,reset,save,wheel_zoom")
-plot.line('x', 'y', source=circle_source, line_width=3, line_alpha=0.6)
-plot.line('x','x', source=line_source, line_width=3, line_alpha=0.8)
+plot.line('x','y', source=circle_source, line_width=3, line_alpha=0.6)
+plot.line('x','y', source=line_source, line_width=3, line_alpha=0.8)
 
 # Set up the input widgets
 stress_x_input = TextInput(title="stress in x", value="2.0")
 stress_y_input = TextInput(title="sress in y", value="5.0")
 shear_input = TextInput(title="shear xy", value="4.0")
+
+# Set up the callback function
+
+def update_data(attrname, old, new):
+
+    # Get the current slider values
+    s_x = stress_x_input.value
+    s_y = stress_y_input.value
+    v = shear_input.value
+
+    # Generate the new circle
+    x, y, X, Y, R, C = mohrs_circle(s_x,s_y,v)
+
+    circle_source.data = dict(x=x, y=y)
+    line_source.data = dict(x=X,y=Y)
+
+for w in [stress_x_input, stress_y_input,shear_input]:
+    w.on_change('value', update_data)
 
 # Set up layouts and add to document
 inputs = column(stress_x_input, stress_y_input, shear_input)

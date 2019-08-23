@@ -12,7 +12,7 @@ Browse to http://8000:5006
 import numpy as np
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
-from bokeh.models import ColumnDataSource
+from bokeh.models import ColumnDataSource, LabelSet
 from bokeh.models.widgets import Slider, TextInput
 from bokeh.plotting import figure
 
@@ -98,6 +98,13 @@ x, y, X, Y, R, C = mohrs_circle()
 # Create the Bokeh Column Data Source Object from the mohrs_circle() output arrays
 circle_source = ColumnDataSource(data=dict(x=x, y=y))
 line_source = ColumnDataSource(data=dict(x=X, y=Y))
+point_source = ColumnDataSource(data=dict(
+                                    stress=[C+R, C-R, C,],
+                                    shear=[0, 0, R],
+                                    point_names=['max stress', 'min stress', 'max shear']))
+point_labels = LabelSet(x='stress', y='shear', text='point_names', level='glyph',
+              x_offset=5, y_offset=5, source=point_source, render_mode='canvas')
+
 
 # Set up the Bokeh Plot
 plot = figure(plot_height=400,plot_width=400, title="Mohr's Circle",
@@ -106,6 +113,8 @@ plot.xaxis.fixed_location = 0
 plot.yaxis.fixed_location = 0
 plot.line('x','y', source=circle_source, line_width=3, line_alpha=0.6)
 plot.line('x','y', source=line_source, line_width=3, line_alpha=0.8)
+plot.scatter(x='stress', y='shear', size=8, source=point_source)
+plot.add_layout(point_labels)
 
 # Set up the input widgets
 stress_x_input = TextInput(title="stress in x", value="2.0")
@@ -126,6 +135,7 @@ def update_data(attrname, old, new):
 
     circle_source.data = dict(x=x, y=y)
     line_source.data = dict(x=X,y=Y)
+    point_source.data = dict(stress=[C+R, C-R, C,], shear=[0, 0, R], point_names=['max stress', 'min stress', 'max shear'])
 
 for w in [stress_x_input, stress_y_input,shear_input]:
     w.on_change('value', update_data)

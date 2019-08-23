@@ -102,6 +102,8 @@ line_source = ColumnDataSource(data=dict(x=X, y=Y))
 # Set up the Bokeh Plot
 plot = figure(plot_height=400,plot_width=400, title="Mohr's Circle",
               tools="pan,reset,save,wheel_zoom")
+plot.xaxis.fixed_location = 0
+plot.yaxis.fixed_location = 0
 plot.line('x','y', source=circle_source, line_width=3, line_alpha=0.6)
 plot.line('x','y', source=line_source, line_width=3, line_alpha=0.8)
 
@@ -115,9 +117,9 @@ shear_input = TextInput(title="shear xy", value="4.0")
 def update_data(attrname, old, new):
 
     # Get the current slider values
-    s_x = stress_x_input.value
-    s_y = stress_y_input.value
-    v = shear_input.value
+    s_x = float(stress_x_input.value)
+    s_y = float(stress_y_input.value)
+    v = float(shear_input.value)
 
     # Generate the new circle
     x, y, X, Y, R, C = mohrs_circle(s_x,s_y,v)

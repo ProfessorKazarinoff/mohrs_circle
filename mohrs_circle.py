@@ -12,7 +12,7 @@ Browse to http://8000:5006
 import numpy as np
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
-from bokeh.models import ColumnDataSource, LabelSet
+from bokeh.models import ColumnDataSource, LabelSet, Range1d
 from bokeh.models.widgets import Slider, TextInput
 from bokeh.plotting import figure
 
@@ -92,29 +92,52 @@ def mohrs_circle(stress_x=2.0, stress_y=5.0, shear=4.0):
 
     return x, y, X, Y, R, C
 
-#For now make dummy data to plot
+
+# For now make dummy data to plot
 x, y, X, Y, R, C = mohrs_circle()
 
 # Create the Bokeh Column Data Source Object from the mohrs_circle() output arrays
 circle_source = ColumnDataSource(data=dict(x=x, y=y))
 line_source = ColumnDataSource(data=dict(x=X, y=Y))
-point_source = ColumnDataSource(data=dict(
-                                    stress=[C+R, C-R, C,],
-                                    shear=[0, 0, R],
-                                    point_names=['max stress', 'min stress', 'max shear']))
-point_labels = LabelSet(x='stress', y='shear', text='point_names', level='glyph',
-              x_offset=5, y_offset=5, source=point_source, render_mode='canvas')
+point_source = ColumnDataSource(
+    data=dict(
+        stress=[C + R, C - R, C],
+        shear=[0, 0, R],
+        point_names=[
+            f"max stress = {str(round(C+R,2))}",
+            f"min stress = {str(round(C-R,2))}",
+            f"max shear = {str(round(R,2))}",
+        ],
+    )
+)
+point_labels = LabelSet(
+    x="stress",
+    y="shear",
+    text="point_names",
+    level="glyph",
+    x_offset=-5,
+    y_offset=5,
+    text_align="right",
+    source=point_source,
+    render_mode="canvas",
+)
 
 
 # Set up the Bokeh Plot
-plot = figure(plot_height=400,plot_width=400, title="Mohr's Circle",
-              tools="pan,reset,save,wheel_zoom")
+plot = figure(
+    plot_height=400,
+    plot_width=400,
+    match_aspect=True,
+    title="Mohr's Circle",
+    tools="pan,reset,save,wheel_zoom",
+)
 plot.xaxis.fixed_location = 0
 plot.yaxis.fixed_location = 0
-plot.line('x','y', source=circle_source, line_width=3, line_alpha=0.6)
-plot.line('x','y', source=line_source, line_width=3, line_alpha=0.8)
-plot.scatter(x='stress', y='shear', size=8, source=point_source)
+plot.line("x", "y", source=circle_source, line_width=3, line_alpha=0.6)
+plot.line("x", "y", source=line_source, line_width=3, line_alpha=0.8)
+plot.scatter(x="stress", y="shear", size=8, source=point_source)
 plot.add_layout(point_labels)
+# plot.x_range= Range1d(C-R-0.1*(2*R) , C+R+0.1*(2*R))
 
 # Set up the input widgets
 stress_x_input = TextInput(title="stress in x", value="2.0")
@@ -122,6 +145,7 @@ stress_y_input = TextInput(title="sress in y", value="5.0")
 shear_input = TextInput(title="shear xy", value="4.0")
 
 # Set up the callback function
+
 
 def update_data(attrname, old, new):
 
@@ -131,14 +155,23 @@ def update_data(attrname, old, new):
     v = float(shear_input.value)
 
     # Generate the new circle
-    x, y, X, Y, R, C = mohrs_circle(s_x,s_y,v)
+    x, y, X, Y, R, C = mohrs_circle(s_x, s_y, v)
 
     circle_source.data = dict(x=x, y=y)
-    line_source.data = dict(x=X,y=Y)
-    point_source.data = dict(stress=[C+R, C-R, C,], shear=[0, 0, R], point_names=['max stress', 'min stress', 'max shear'])
+    line_source.data = dict(x=X, y=Y)
+    point_source.data = dict(
+        stress=[C + R, C - R, C],
+        shear=[0, 0, R],
+        point_names=[
+            f"max stress = {str(round(C+R,2))}",
+            f"min stress = {str(round(C-R,2))}",
+            f"max shear = {str(round(R,2))}",
+        ],
+    )
 
-for w in [stress_x_input, stress_y_input,shear_input]:
-    w.on_change('value', update_data)
+
+for w in [stress_x_input, stress_y_input, shear_input]:
+    w.on_change("value", update_data)
 
 # Set up layouts and add to document
 inputs = column(stress_x_input, stress_y_input, shear_input)

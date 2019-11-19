@@ -141,7 +141,7 @@ plot.add_layout(point_labels)
 
 # Set up the input widgets
 stress_x_input = TextInput(title="stress in x", value="2.0")
-stress_y_input = TextInput(title="sress in y", value="5.0")
+stress_y_input = TextInput(title="stress in y", value="5.0")
 shear_input = TextInput(title="shear xy", value="4.0")
 
 # Set up the callback function

@@ -13,7 +13,7 @@ def mohr_c(stress_x, stress_y, shear):
     stress_y: int or float
     shear: int or float
 
-    and outputs a comple NumPy arrays to build a Mohr's Circle
+    and outputs two values for the circle center and radius
 
     output:
     C, R
@@ -51,6 +51,18 @@ def X_Y(stress_x, stress_y, shear):
     X = np.array([stress_x, stress_y])
     Y = np.array([-shear, shear])
     return X, Y
+
+
+def max_stress(C, R):
+    pass
+
+
+def min_stress(C, R):
+    pass
+
+
+def max_shear(C, R):
+    pass
 
 
 def mohrs_circle(stress_x=2.0, stress_y=5.0, shear=4.0):

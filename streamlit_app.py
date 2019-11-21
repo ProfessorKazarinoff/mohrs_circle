@@ -2,7 +2,7 @@
 """
 A streamlit app to draw a Mohr's Circle based on user input
 """
-
+import plotly
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
@@ -25,22 +25,31 @@ st.sidebar.markdown(f"max shear = {round(R,2)}")
 fig, ax = plt.subplots()
 
 ax.plot(circle_x, circle_y)
-ax.plot(X, Y, "r")
+ax.plot(X, Y, "C1")
 ax.axis("equal")
 ax.axvline(0, color="black", alpha=0.2)
 ax.axhline(0, color="black", alpha=0.2)
+ax.set_xlabel("stress")
+ax.set_ylabel("shear")
 
 ax.annotate(
-    s=f"$+\sigma$ = {round(C+R,2)}",
+    s=f"max stress = {round(C+R,2)}",
     xy=(C + R, 0),
     xytext=(C + R, 0),
-    arrowprops=dict(facecolor="blue", shrink=0.05),
+    arrowprops=dict(facecolor="C0", edgecolor="C0", shrink=0.05),
 )
 ax.annotate(
-    s=f"$-\sigma$ = {round(C-R,2)}",
+    s=f"min stress = {round(C-R,2)}",
     xy=(C - R, 0),
     xytext=(C - R, 0),
-    arrowprops=dict(facecolor="blue", shrink=0.05),
+    arrowprops=dict(facecolor="C0", edgecolor="C0", shrink=0.05, linewidth=None),
+)
+
+ax.annotate(
+    s=f"max shear = {round(R,2)}",
+    xy=(C, R),
+    xytext=(C, R),
+    arrowprops=dict(facecolor="C0", edgecolor="C0", shrink=0.05),
 )
 
 st.pyplot()

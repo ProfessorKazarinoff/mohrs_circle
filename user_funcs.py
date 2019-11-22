@@ -1,6 +1,6 @@
 # user_funcs.py
 """
-user-defined functions for the streamlit mohr's circle app
+user-defined functions for the Streamlit mohr's circle app
 """
 
 import numpy as np

@@ -1,13 +1,13 @@
-# streamlit_app.py
+# streamlit_app_bokeh.py
 """
-A streamlit app to draw a Mohr's Circle based on user input\
+A streamlit app to draw a Mohr's Circle based on user input
 using the Bokeh plotting library
 """
 
 import numpy as np
 import streamlit as st
 from bokeh.plotting import figure
-from user_funcs import mohrs_circle
+from user_funcs import mohr_c, c_array, X_Y
 
 st.title("Mohr's Circle App")
 
@@ -15,9 +15,14 @@ stress_x = st.sidebar.number_input("stress in x", value=2.0, step=0.1)
 stress_y = st.sidebar.number_input("stress in y", value=5.0, step=0.1)
 shear = st.sidebar.number_input("shear xy", value=4.0, step=0.1)
 
-circle_x, circle_y, X, Y, R, C = mohrs_circle(
-    stress_x=stress_x, stress_y=stress_y, shear=shear
-)
+# find center and radius
+C, R = mohr_c(stress_x, stress_y, shear)
+
+# build arrays plot circle
+circle_x, circle_y = c_array(C, R)
+
+# build arrays to plot line through circle
+X, Y = X_Y(stress_x, stress_y, shear)
 
 st.sidebar.markdown(f"max stress = {round(C+R,2)}")
 st.sidebar.markdown(f"min stress = {round(C-R,2)}")
